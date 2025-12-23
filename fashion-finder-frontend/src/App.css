@@ -1,0 +1,10 @@
+#root {
+  max-width: 1280px;
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.app {
+  background: url("./assets/background.jpg") center / cover no-repeat;;
+}
