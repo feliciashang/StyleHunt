@@ -51,37 +51,3 @@ app.listen(PORT, () => {
     console.log(`🚀 Server running on port ${PORT}`);
 });
 
-async function extractImages(urls: string[]): Promise<string[]> {
-    const images: string[] = []
-    for (const url of urls) {
-        try {
-            const response = await fetch(url, {
-                headers: {
-                    "User-Agent":
-                        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
-                    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-                    "Accept-Language": "en-US,en;q=0.9",
-                    "Referer": "https://www.google.com/",
-                },
-            });
-            if (response.ok) {
-                const html: string = await response.text();
-                const $ = cheerio.load(html);
-
-                const mainImage: string | undefined = $('meta[property="og:image"]').attr("content");
-
-                if (mainImage) {
-                    images.push(mainImage);
-                    console.log("could find " + url + mainImage)
-                } else {
-                    console.log("could not find" + url)
-                }
-            } else {
-                console.log("there has been an error " + url + " " + response.statusText)
-            }
-        } catch (err) {
-            console.error(err);
-        }
-    }
-    return images
-}
