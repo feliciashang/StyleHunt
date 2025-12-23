@@ -3,10 +3,12 @@ import './GridDisplay.css'
 
 interface Props {
     items: [string,string][];
+    similarItems: [string, string][];
 }
 
-const GridDisplay: React.FC<Props> = ({ items }) => {
+const GridDisplay: React.FC<Props> = ({ items, similarItems }) => {
     return (
+        <div>
         <div className="grid grid-cols-3 gap-4 mt-8">
             {items.map(([imageUrl, pageUrl], index) => (
                 <div key={index} className="grid-item">
@@ -18,6 +20,18 @@ const GridDisplay: React.FC<Props> = ({ items }) => {
                     </a>
                 </div>
             ))}
+        </div>
+        <div className="grid grid-cols-3 gap-4 mt-8">
+            {similarItems.map(([imageUrl, pageUrl], index) => (
+                <div key={index}>
+                    <a href={pageUrl} target="_blank" rel="noopener noreferrer">
+                        <img src={imageUrl} 
+                        className="w-full h-auto object-contain rounded-lg border"
+                        />
+                    </a>
+                </div>
+            ))}
+         </div>
         </div>
     )
 }

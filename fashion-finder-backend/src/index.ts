@@ -29,17 +29,27 @@ app.post("/api/vision", upload.single("image"), async (req, res) => {
             image: { content: req.file.buffer },
         });
         const results = [];
+        const similarResults = [];
         if (result.webDetection) {
             for (const page of result.webDetection?.pagesWithMatchingImages ?? []) {
                 for (const image of page.fullMatchingImages ?? []) {
+                    console.log(page.url, image.url)
                     results.push({
                         imageUrl: image.url,
                         pageUrl: page.url
                     });
                 }
             }
+            for (const page of result.webDetection?.visuallySimilarImages ?? []) {
+                if (!page.url) continue;
+                const googleLensUrl = `https://lens.google.com/uploadbyurl?url=${encodeURIComponent(page.url)}`;
+                similarResults.push({ 
+                    imageUrl: page.url, 
+                    pageUrl: googleLensUrl 
+                });
+            }
         }
-        res.json(results);
+        res.json({ results, similarResults });
     } catch (e) {
         console.error(e);
         res.status(500).json({ error: "Vision API error" });
