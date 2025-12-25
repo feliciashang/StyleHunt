@@ -12,3 +12,8 @@
   text-align: center;
   border-radius: 8px;
 }
+
+.subtitle {
+  color: white;
+  font-weight: bold;
+}

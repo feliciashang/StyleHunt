@@ -9,6 +9,7 @@ interface Props {
 const GridDisplay: React.FC<Props> = ({ items, similarItems }) => {
     return (
         <div>
+        <p className="subtitle">Fully matching pages</p>
         <div className="grid grid-cols-3 gap-4 mt-8">
             {items.map(([imageUrl, pageUrl], index) => (
                 <div key={index} className="grid-item">
@@ -21,6 +22,7 @@ const GridDisplay: React.FC<Props> = ({ items, similarItems }) => {
                 </div>
             ))}
         </div>
+        <p className="subtitle">Similar matching pages</p>
         <div className="grid grid-cols-3 gap-4 mt-8">
             {similarItems.map(([imageUrl, pageUrl], index) => (
                 <div key={index}>
