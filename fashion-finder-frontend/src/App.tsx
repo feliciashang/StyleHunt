@@ -120,7 +120,7 @@ return (
       />
     </div>
     <div style={{ height: '50px' }}></div>
-    {imageData.length > 0 || similarUrl.length > 0 && (
+    {(imageData.length > 0 || similarUrl.length > 0) && (
       <GridDisplay items={imageData} similarItems={similarUrl} />
     )}
 
