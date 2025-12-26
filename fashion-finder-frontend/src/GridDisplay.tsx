@@ -2,7 +2,7 @@ import React from "react";
 import './GridDisplay.css'
 
 interface Props {
-    items: [string, string][];
+    items: [string, string, string][];
     similarItems: [string, string][];
 }
 
@@ -11,8 +11,9 @@ const GridDisplay: React.FC<Props> = ({ items, similarItems }) => {
         <div>
             <p className="subtitle">Fully matching pages</p>
             <div className="grid grid-cols-3 gap-4 mt-8">
-                {items.map(([imageUrl, pageUrl], index) => (
+                {items.map(([imageUrl, pageUrl, price], index) => (
                     <div key={index} className="grid-item">
+                        <p className="pricetag">{price}</p>
                         <a href={pageUrl} target="_blank" rel="noopener noreferrer">
                             <img
                                 src={imageUrl}

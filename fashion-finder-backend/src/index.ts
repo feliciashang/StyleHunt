@@ -9,6 +9,7 @@ import { v1 as vision } from "@google-cloud/vision"
 import { searchClothing } from "./routes.js";
 import multer from "multer";
 import * as cheerio from "cheerio";
+import axios from 'axios';
 
 
 
@@ -33,8 +34,12 @@ app.post("/api/vision", upload.single("image"), async (req, res) => {
         if (result.webDetection) {
             for (const page of result.webDetection?.pagesWithMatchingImages ?? []) {
                 for (const image of page.fullMatchingImages ?? []) {
-                    console.log(page.url, image.url)
+                    let price: string = "$0";
+                    if (page.url) {
+                        price = await getProductPrice(page.url) ?? "$0";;
+                    }
                     results.push({
+                        price: price,
                         imageUrl: image.url,
                         pageUrl: page.url
                     });
@@ -43,9 +48,9 @@ app.post("/api/vision", upload.single("image"), async (req, res) => {
             for (const page of result.webDetection?.visuallySimilarImages ?? []) {
                 if (!page.url) continue;
                 const googleLensUrl = `https://lens.google.com/uploadbyurl?url=${encodeURIComponent(page.url)}`;
-                similarResults.push({ 
-                    imageUrl: page.url, 
-                    pageUrl: googleLensUrl 
+                similarResults.push({
+                    imageUrl: page.url,
+                    pageUrl: googleLensUrl
                 });
             }
         }
@@ -60,4 +65,21 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`🚀 Server running on port ${PORT}`);
 });
+
+
+async function getProductPrice(url: string) {
+    try {
+        const { data } = await axios.get(url);
+        const $ = cheerio.load(data);
+
+        const pageText = $('body').text();
+        const priceMatch = pageText.match(/[\$\€\£]\d+(\.\d{2})?/);
+
+        const priceText = priceMatch ? priceMatch[0] : "$0";
+
+        return priceText
+    } catch (error) {
+        console.error("Error fetching product details:", error);
+    }
+}
 
