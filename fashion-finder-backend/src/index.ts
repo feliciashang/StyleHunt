@@ -10,9 +10,10 @@ import { searchClothing } from "./routes.js";
 import multer from "multer";
 import * as cheerio from "cheerio";
 import axios from 'axios';
+import { remove } from "cheerio/dist/commonjs/api/manipulation.js";
 
 
-
+const socialMediaLinks = ["instagram", "facebook", "tiktok", "youtube"]
 
 dotenv.config();
 const app = express();
@@ -33,6 +34,7 @@ app.post("/api/vision", upload.single("image"), async (req, res) => {
         const similarResults = [];
         if (result.webDetection) {
             for (const page of result.webDetection?.pagesWithMatchingImages ?? []) {
+                if (page.url && removeSocialMedia(page.url)) continue;
                 for (const image of page.fullMatchingImages ?? []) {
                     let price: string = "$0";
                     if (page.url) {
@@ -46,7 +48,7 @@ app.post("/api/vision", upload.single("image"), async (req, res) => {
                 }
             }
             for (const page of result.webDetection?.visuallySimilarImages ?? []) {
-                if (!page.url) continue;
+                if (!page.url || removeSocialMedia(page.url)) continue;
                 const googleLensUrl = `https://lens.google.com/uploadbyurl?url=${encodeURIComponent(page.url)}`;
                 similarResults.push({
                     imageUrl: page.url,
@@ -81,5 +83,9 @@ async function getProductPrice(url: string) {
     } catch (error) {
         console.error("Error fetching product details:", error);
     }
+}
+
+function removeSocialMedia(url: string) {
+    return socialMediaLinks.some(link => url.toLowerCase().includes(link.toLowerCase()));
 }
 
